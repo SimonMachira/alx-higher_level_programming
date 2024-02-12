@@ -1,51 +1,83 @@
 #!/usr/bin/python3
-
-"""This class module defines square tests"""
-
-
-import unittest
-from models.square import Square
-from models.base import Base
+"""Defines a square class."""
 from models.rectangle import Rectangle
 
 
-class TestSquare(unittest.TestCase):
+class Square(Rectangle):
+    """Represent a square."""
 
-    def test_size_setter_invalid_type(self):
-        s = Square(5)
+    def __init__(self, size, x=0, y=0, id=None):
+        """Initialize a new Square.
 
-        with self.assertRaises(TypeError):
-            s.size = "invalid"
+        Args:
+            size (int): The size of the new Square.
+            x (int): The x coordinate of the new Square.
+            y (int): The y coordinate of the new Square.
+            id (int): The identity of the new Square.
+        """
+        super().__init__(size, size, x, y, id)
 
-    def test_setter_invalid_value(self):
-        s = Square(5)
+    @property
+    def size(self):
+        """Get/set the size of the Square."""
+        return self.width
 
-        with self.assertRaises(ValueError):
-            s.size = -1
+    @size.setter
+    def size(self, value):
+        self.width = value
+        self.height = value
 
-    def test_update_args(self):
-        s = Square(5)
+    def update(self, *args, **kwargs):
+        """Update the Square.
 
-        s.update(10, 8, 2, 3)
-        self.assertEqual(s.id, 10)
-        self.assertEqual(s.size, 8)
-        self.assertEqual(s.x, 2)
+        Args:
+            *args (ints): New attribute values.
+                - 1st argument represents id attribute
+                - 2nd argument represents size attribute
+                - 3rd argument represents x attribute
+                - 4th argument represents y attribute
+            **kwargs (dict): New key/value pairs of attributes.
+        """
+        if args and len(args) != 0:
+            a = 0
+            for arg in args:
+                if a == 0:
+                    if arg is None:
+                        self.__init__(self.size, self.x, self.y)
+                    else:
+                        self.id = arg
+                elif a == 1:
+                    self.size = arg
+                elif a == 2:
+                    self.x = arg
+                elif a == 3:
+                    self.y = arg
+                a += 1
 
-    def test_update_kwargs(self):
-        s = Square(5)
+        elif kwargs and len(kwargs) != 0:
+            for k, v in kwargs.items():
+                if k == "id":
+                    if v is None:
+                        self.__init__(self.size, self.x, self.y)
+                    else:
+                        self.id = v
+                elif k == "size":
+                    self.size = v
+                elif k == "x":
+                    self.x = v
+                elif k == "y":
+                    self.y = v
 
-        s.update(id=10, size=8, x=2, y=3)
-        self.assertEqual(s.id, 10)
-        self.assertEqual(s.size, 8)
-        self.assertEqual(s.x, 2)
-        self.assertEqual(s.y, 3)
+    def to_dictionary(self):
+        """Return the dictionary representation of the Square."""
+        return {
+            "id": self.id,
+            "size": self.width,
+            "x": self.x,
+            "y": self.y
+        }
 
-    def test_to_dictionary(self):
-        s = Square(5, 2, 3, 10)
-        dic = {
-                "id": 10,
-                "size": 5,
-                "x": 2,
-                "y": 3
-                }
-        self.assertEqual(s.to_dictionary(), dic)
+    def __str__(self):
+        """Return the print() and str() representation of a Square."""
+        return "[Square] ({}) {}/{} - {}".format(self.id, self.x, self.y,
+                                                 self.width)
